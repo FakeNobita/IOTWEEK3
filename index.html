@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IOT NPTEL WEEK-3</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .question-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border: 1px solid #e5e5e5;
+        }
+
+        .question-text {
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: #333;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            padding: 12px;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+        }
+
+        .option:hover {
+            background-color: #f8f8f8;
+        }
+
+        .option.selected {
+            border-color: #3b82f6;
+        }
+
+        .option.correct {
+            background-color: #ecfdf5;
+        }
+
+        .option.wrong {
+            background-color: #fef2f2;
+        }
+
+        .option input[type="radio"] {
+            margin-right: 12px;
+        }
+
+        .feedback {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #e5e5e5;
+            display: none;
+        }
+
+        .feedback.visible {
+            display: block;
+        }
+
+        .result-icon {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .result-icon.correct {
+            color: #059669;
+        }
+
+        .result-icon.wrong {
+            color: #dc2626;
+        }
+
+        .explanation {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 24px;
+        }
+
+        .score {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .button {
+            background-color: #3b82f6;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.2s;
+        }
+
+        .button:hover {
+            background-color: #2563eb;
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>IOT NPTEL WEEK-3</h1>
+        <div id="quiz-container"></div>
+        <div class="controls">
+            <div id="score" class="score"></div>
+            <button id="submit-btn" class="button">Submit Answers</button>
+        </div>
+    </div>
+
+    <script>
+const questions = [
+    {
+        id: 1,
+        question: "Statement: “WirelessHART is the latest release of Highway Addressable Remote Transducer protocol.”",
+        options: ["True", "False"],
+        correctAnswer: 0,
+        explanation: "WirelessHART is the latest release of Highway Addressable Remote Transducer protocol. See lecture 11 @ 01:42"
+    },
+    {
+        id: 2,
+        question: "Statement: “Wired HART has a network layer.”",
+        options: ["True", "False"],
+        correctAnswer: 1,
+        explanation: "Wired HART does not have a network layer. See lecture 11 @ 04:25"
+    },
+    {
+        id: 3,
+        question: "“WirelessHART physical layer is derived from 802.15.2 protocol”",
+        options: ["False", "True"],
+        correctAnswer: 0,
+        explanation: "WirelessHART physical layer is derived from 802.15.4 protocol. See lecture 11 @ 06:00"
+    },
+    {
+        id: 4,
+        question: "WirelessHART operates only in __________ GHz ISM band.",
+        options: ["3.7", "4.8", "4.8", "2.4"],
+        correctAnswer: 3,
+        explanation: "WirelessHART operates only in the 2.4 GHz ISM band. See lecture 11 @ 06:00"
+    },
+    {
+        id: 5,
+        question: "HART standard was developed from _____________ smart field devices.",
+        options: ["amplified", "diminished", "isolated", "networked"],
+        correctAnswer: 3,
+        explanation: "HART standard was developed for networked smart field devices. See lecture 11 @ 02:36"
+    },
+    {
+        id: 6,
+        question: "Main difference between wired and unwired versions is in the physical, data link, and ______ layers.",
+        options: ["Data link", "Network", "Transport", "None of these"],
+        correctAnswer: 1,
+        explanation: "The main difference is in the physical, data link, and network layers. See lecture 11 @ 05:05"
+    },
+    {
+        id: 7,
+        question: "“Collision free and deterministic communication is achieved in HART’s data link layer.”",
+        options: ["True", "False"],
+        correctAnswer: 0,
+        explanation: "Collision free and deterministic communication is achieved in the data link layer. See lecture 11 @ 06:37"
+    },
+    {
+        id: 8,
+        question: "Channel hopping is incorporated in which layer of HART?",
+        options: ["Data link layer", "Physical layer", "Application layer", "Transport layer"],
+        correctAnswer: 0,
+        explanation: "Channel hopping is incorporated in the data link layer. See lecture 11 @ 08:21"
+    },
+    {
+        id: 9,
+        question: "“The HART application layer is responsible for extracting commands from a message, executing it and generating responses.”",
+        options: ["True", "False"],
+        correctAnswer: 0,
+        explanation: "The HART application layer handles command processing and responses. See lecture 11 @ 10:26"
+    },
+    {
+        id: 10,
+        question: "NFC is designed for use by devices within ________________ to each other.",
+        options: ["Anywhere on the globe", "A small building", "Both (a) and (b)", "None of these"],
+        correctAnswer: 3,
+        explanation: "NFC is for devices in close proximity. See lecture 11 @ 17:47"
+    },
+    {
+        id: 11,
+        question: "Passive NFC devices ___________ information which is _____________ by other devices.",
+        options: ["contain, read", "read, contain", "contain, contain", "None of these"],
+        correctAnswer: 0,
+        explanation: "Passive NFC devices contain information read by others. See lecture 11 @ 18:34"
+    },
+    {
+        id: 12,
+        question: "“NFC devices work on the principle of magnetic induction.”",
+        options: ["True", "False"],
+        correctAnswer: 0,
+        explanation: "True – NFC uses magnetic induction. See lecture 11 @ 21:47"
+    },
+    {
+        id: 13,
+        question: "Bluetooth technology is based on _________________",
+        options: ["HART", "ZigBee", "All of these", "None of these"],
+        correctAnswer: 3,
+        explanation: "Bluetooth is based on ad-hoc piconets. See lecture 12 @ 02:30"
+    },
+    {
+        id: 14,
+        question: "Statement: The Link Manager Protocol in Bluetooth manages the only establishment and authentication.",
+        options: ["True", "False"],
+        correctAnswer: 1,
+        explanation: "The Link Manager handles establishment, authentication, and configuration. Book: Introduction to IoT, Pg. 157"
+    },
+    {
+        id: 15,
+        question: "Zigbee commonly uses __________ data rate.",
+        options: ["260 bps", "260 kbps", "260 Mbps", "None of these"],
+        correctAnswer: 3,
+        explanation: "Zigbee commonly uses 250 kbps. Book: Introduction to IoT, Pg. 131"
+    }
+];
+
+
+
+        let selectedAnswers = {};
+        let submitted = false;
+
+        function createQuiz() {
+            const quizContainer = document.getElementById('quiz-container');
+            
+            questions.forEach(question => {
+                const questionCard = document.createElement('div');
+                questionCard.className = 'question-card';
+                
+                questionCard.innerHTML = `
+                    <div class="question-text">Q${question.id}. ${question.question}</div>
+                    <div class="options-container">
+                        ${question.options.map((option, index) => `
+                            <label class="option" data-question="${question.id}" data-option="${index}">
+                                <input type="radio" name="question${question.id}" value="${index}">
+                                ${option}
+                            </label>
+                        `).join('')}
+                    </div>
+                    <div class="feedback" id="feedback-${question.id}">
+                        <div class="result-icon">
+                            <span class="icon"></span>
+                            <span class="result-text"></span>
+                        </div>
+                        <div class="explanation">${question.explanation}</div>
+                    </div>
+                `;
+                
+                quizContainer.appendChild(questionCard);
+            });
+
+            document.querySelectorAll('.option').forEach(option => {
+                option.addEventListener('click', handleOptionSelect);
+            });
+
+            document.getElementById('submit-btn').addEventListener('click', handleSubmit);
+        }
+
+        function handleOptionSelect(event) {
+            if (submitted) return;
+
+            const questionId = parseInt(event.currentTarget.dataset.question);
+            const optionIndex = parseInt(event.currentTarget.dataset.option);
+
+            selectedAnswers[questionId] = optionIndex;
+
+            const questionOptions = document.querySelectorAll(`.option[data-question="${questionId}"]`);
+            questionOptions.forEach(option => {
+                option.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+
+            const radioButton = event.currentTarget.querySelector('input[type="radio"]');
+            radioButton.checked = true;
+        }
+
+        function handleSubmit() {
+            if (Object.keys(selectedAnswers).length < questions.length) {
+                alert("Please answer all questions before submitting!");
+                return;
+            }
+
+            submitted = true;
+            let score = 0;
+
+            questions.forEach(question => {
+                const isCorrect = selectedAnswers[question.id] === question.correctAnswer;
+                if (isCorrect) score++;
+
+                const feedback = document.getElementById(`feedback-${question.id}`);
+                feedback.classList.add('visible');
+
+                const resultIcon = feedback.querySelector('.result-icon');
+                const resultText = feedback.querySelector('.result-text');
+                
+                if (isCorrect) {
+                    resultIcon.classList.add('correct');
+                    resultText.textContent = 'Correct Answer +1';
+                } else {
+                    resultIcon.classList.add('wrong');
+                    resultText.textContent = 'Wrong Answer +0';
+                }
+
+                const options = document.querySelectorAll(`.option[data-question="${question.id}"]`);
+                options.forEach((option, index) => {
+                    if (index === question.correctAnswer) {
+                        option.classList.add('correct');
+                    } else if (index === selectedAnswers[question.id]) {
+                        option.classList.add('wrong');
+                    }
+                });
+            });
+
+            document.getElementById('score').textContent = `Score: ${score}/${questions.length}`;
+
+            const submitBtn = document.getElementById('submit-btn');
+            submitBtn.textContent = 'Try Again';
+            submitBtn.removeEventListener('click', handleSubmit);
+            submitBtn.addEventListener('click', resetQuiz);
+        }
+
+        function resetQuiz() {
+            location.reload();
+        }
+
+        createQuiz();
+    </script>
+</body>
+</html>
